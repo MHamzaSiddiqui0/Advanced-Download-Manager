@@ -1,2 +1,2 @@
 all:
-	 gcc -o main main.c -lcurl
+	 gcc -o main main.c -lcurl -lm
