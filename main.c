@@ -101,6 +101,8 @@ void log_message(const char *message)
     pthread_mutex_unlock(&log_mutex);
 }
 
+void enqueue_chunk(BufferQueue *queue, ChunkBuffer chunk);
+
 int create_downloads_dir()
 {
     struct stat st = {0};
@@ -428,7 +430,7 @@ void *download_thread(void *arg)
     task->last_update_time = task->start_time;
     task->last_downloaded = 0;
     task->speed = 0;
-    char log_msg[256];
+    char log_msg[2048];
     snprintf(log_msg, sizeof(log_msg), "Download started: %s", task->url);
     log_message(log_msg);
 
@@ -624,7 +626,7 @@ void add_download(const char *url, const char *custom_filename, int priority)
     else
     {
         num_downloads++;
-        char log_msg[512];
+        char log_msg[4096];
         snprintf(log_msg, sizeof(log_msg), "Added download: %s -> %s (Priority: %d)",
                  task->url, task->full_path, task->priority);
         log_message(log_msg);
@@ -758,7 +760,7 @@ void view_logs()
     printf("\nDownload Logs:\n");
     printf("----------------------------------------------------------------------------\n");
 
-    char line[512];
+    char line[2048];
     while (fgets(line, sizeof(line), log_file))
     {
         printf("%s", line);
@@ -767,7 +769,9 @@ void view_logs()
     printf("----------------------------------------------------------------------------\n");
     fclose(log_file);
 }
-
+ 
+    
+    
 int main()
 {
     if (create_downloads_dir() != 0)
@@ -925,4 +929,4 @@ int main()
 
     printf("Goodbye!\n");
     return 0;
-}
+}     
